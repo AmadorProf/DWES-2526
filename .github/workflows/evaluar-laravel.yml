@@ -1,0 +1,139 @@
+name: Evaluación Laravel — Examen MovieHub
+
+on:
+  push:
+    paths: ['laravel/Examen/**']
+  pull_request:
+    paths: ['laravel/Examen/**']
+  workflow_dispatch:
+
+jobs:
+  # ─── 1. TESTS AUTOMATIZADOS ─────────────────────────────────────────────────
+  tests:
+    name: PHPUnit / Pest
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: testing
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -psecret --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, zip, intl, bcmath
+          coverage: none
+
+      - name: Instalar dependencias Composer
+        working-directory: laravel/Examen
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Configurar .env de test
+        working-directory: laravel/Examen
+        run: |
+          cp .env.example .env
+          sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=testing/' .env
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=secret/' .env
+          php artisan key:generate
+
+      - name: Ejecutar migraciones
+        working-directory: laravel/Examen
+        run: php artisan migrate --force
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: testing
+          DB_USERNAME: root
+          DB_PASSWORD: secret
+
+      - name: Cargar seeders
+        working-directory: laravel/Examen
+        run: php artisan db:seed --force
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: testing
+          DB_USERNAME: root
+          DB_PASSWORD: secret
+
+      - name: Ejecutar tests
+        working-directory: laravel/Examen
+        run: php artisan test --colors=always
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: testing
+          DB_USERNAME: root
+          DB_PASSWORD: secret
+
+  # ─── 2. ESTRUCTURA DEL PROYECTO ─────────────────────────────────────────────
+  estructura:
+    name: Estructura y convenciones Laravel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar controladores existen
+        run: |
+          ls laravel/Examen/app/Http/Controllers/MovieController.php \
+             laravel/Examen/app/Http/Controllers/ReviewController.php \
+             laravel/Examen/app/Http/Controllers/RatingController.php \
+             laravel/Examen/app/Http/Controllers/AdminController.php
+          echo "OK: todos los controladores presentes"
+
+      - name: Verificar modelos existen
+        run: |
+          ls laravel/Examen/app/Models/Movie.php \
+             laravel/Examen/app/Models/Review.php \
+             laravel/Examen/app/Models/Rating.php \
+             laravel/Examen/app/Models/User.php
+          echo "OK: todos los modelos presentes"
+
+      - name: Verificar migraciones existen
+        run: |
+          ls laravel/Examen/database/migrations/
+          COUNT=$(ls laravel/Examen/database/migrations/ | wc -l)
+          echo "Migraciones encontradas: $COUNT"
+          [ "$COUNT" -ge 4 ] || (echo "FALLO: se esperan al menos 4 migraciones" && exit 1)
+
+      - name: Verificar seeders existen
+        run: |
+          ls laravel/Examen/database/seeders/MovieSeeder.php \
+             laravel/Examen/database/seeders/UserSeeder.php
+          echo "OK: seeders presentes"
+
+      - name: Verificar vistas principales existen
+        run: |
+          ls laravel/Examen/resources/views/movies/index.blade.php \
+             laravel/Examen/resources/views/movies/show.blade.php \
+             laravel/Examen/resources/views/movies/create.blade.php \
+             laravel/Examen/resources/views/movies/edit.blade.php
+          echo "OK: vistas CRUD de movies presentes"
+
+      - name: Verificar middleware de admin
+        run: |
+          ls laravel/Examen/app/Http/Middleware/IsAdmin.php
+          echo "OK: middleware IsAdmin presente"
+
+      - name: Verificar rutas web definidas
+        run: |
+          RUTAS=$(grep -c "Route::" laravel/Examen/routes/web.php || true)
+          echo "Rutas definidas en web.php: $RUTAS"
+          [ "$RUTAS" -ge 5 ] || (echo "FALLO: se esperan al menos 5 rutas" && exit 1)

@@ -1,0 +1,118 @@
+name: Evaluación PHP — Mountain Connect
+
+on:
+  push:
+    paths: ['PHP/proyecto/**']
+  pull_request:
+    paths: ['PHP/proyecto/**']
+  workflow_dispatch:
+
+jobs:
+  # ─── 1. SINTAXIS ────────────────────────────────────────────────────────────
+  sintaxis:
+    name: Sintaxis PHP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Comprobar sintaxis de todos los archivos .php
+        run: |
+          ERRORS=0
+          while IFS= read -r f; do
+            php -l "$f" || ERRORS=$((ERRORS+1))
+          done < <(find "PHP/proyecto" -name "*.php")
+          echo "Archivos con errores de sintaxis: $ERRORS"
+          exit $ERRORS
+
+  # ─── 2. TEST FUNCIONAL ──────────────────────────────────────────────────────
+  funcional:
+    name: Test funcional (Docker)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construir e iniciar servicios
+        run: |
+          docker compose -f "PHP/proyecto/mountain-connect Fase2/docker-compose.yml" \
+            up -d --build
+
+      - name: Esperar MySQL
+        run: |
+          for i in $(seq 1 30); do
+            docker compose -f "PHP/proyecto/mountain-connect Fase2/docker-compose.yml" \
+              exec -T mysql mysqladmin ping -h 127.0.0.1 -u root -prootpass --silent \
+              2>/dev/null && echo "MySQL listo" && break
+            echo "Intento $i — esperando MySQL..."
+            sleep 3
+          done
+
+      - name: Importar esquema de base de datos
+        run: |
+          docker compose -f "PHP/proyecto/mountain-connect Fase2/docker-compose.yml" \
+            exec -T mysql mysql -u root -prootpass \
+            < "PHP/proyecto/FASE 2/create_DB.sql" 2>/dev/null || true
+
+      - name: Esperar nginx
+        run: |
+          for i in $(seq 1 20); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/login.php)
+            [ "$STATUS" = "200" ] && echo "App lista" && break
+            echo "Intento $i — esperando nginx..."
+            sleep 3
+          done
+
+      - name: Login page → 200
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/login.php)
+          echo "login.php → HTTP $STATUS"
+          [ "$STATUS" = "200" ]
+
+      - name: Formulario de login presente en el HTML
+        run: |
+          curl -s http://localhost:8080/login.php | grep -qi "<form" \
+            || (echo "FALLO: no hay <form> en login.php" && exit 1)
+          echo "OK: formulario de login detectado"
+
+      - name: Página de registro responde
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/register.php)
+          echo "register.php → HTTP $STATUS"
+          [ "$STATUS" = "200" ] || [ "$STATUS" = "302" ]
+
+      - name: Ruta de listado responde (protegida o pública)
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            http://localhost:8080/routes/list.php)
+          echo "routes/list.php → HTTP $STATUS"
+          [ "$STATUS" = "200" ] || [ "$STATUS" = "302" ]
+
+      - name: Ruta de creación responde
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            http://localhost:8080/routes/create.php)
+          echo "routes/create.php → HTTP $STATUS"
+          [ "$STATUS" = "200" ] || [ "$STATUS" = "302" ]
+
+      - name: No hay errores PHP en los logs
+        run: |
+          LOGS=$(docker compose -f "PHP/proyecto/mountain-connect Fase2/docker-compose.yml" \
+            logs php 2>&1)
+          echo "$LOGS"
+          echo "$LOGS" | grep -qi "fatal error\|parse error" \
+            && (echo "FALLO: errores PHP en logs" && exit 1) || true
+
+      - name: Logs en caso de fallo
+        if: failure()
+        run: |
+          docker compose -f "PHP/proyecto/mountain-connect Fase2/docker-compose.yml" \
+            logs --tail=50
+
+      - name: Apagar servicios
+        if: always()
+        run: |
+          docker compose -f "PHP/proyecto/mountain-connect Fase2/docker-compose.yml" \
+            down -v
