@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Nombre base del proyecto
+PROJECT_NAME="mountain-connect"
+
+# Crear estructura de directorios
+mkdir -p $PROJECT_NAME/{config,includes,public/{routes,ferratas,climbing,photos},uploads/{photos,profiles},assets/{css,js,images}}
+
+# Crear archivos base
+touch $PROJECT_NAME/config/config.php
+
+touch $PROJECT_NAME/includes/{header.php,footer.php,functions.php,auth_check.php}
+
+touch $PROJECT_NAME/public/{index.php,login.php,register.php,logout.php,profile.php}
+
+touch $PROJECT_NAME/public/routes/{create.php,list.php,view.php,edit.php,delete.php}
+
+# Mensaje final
+echo "Estructura de '$PROJECT_NAME' creada con éxito:"
+tree $PROJECT_NAME 2>/dev/null || find $PROJECT_NAME

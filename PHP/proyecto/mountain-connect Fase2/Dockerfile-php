@@ -1,0 +1,55 @@
+# Dockerfile-php (robusto)
+FROM php:8.2-fpm
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+# Instalar dependencias de sistema necesarias para compilar extensiones PHP
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+     ca-certificates \
+     apt-transport-https \
+     gnupg2 \
+     dirmngr \
+     curl \
+     git \
+     unzip \
+     build-essential \
+     pkg-config \
+     zlib1g-dev \
+     libzip-dev \
+     libpng-dev \
+     libjpeg62-turbo-dev \
+     libfreetype6-dev \
+     libicu-dev \
+     libonig-dev \
+     libxml2-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+# Configurar y compilar extensiones necesarias
+RUN apt-get update \
+  && docker-php-ext-configure gd --with-jpeg --with-freetype \
+  && docker-php-ext-install -j"$(nproc)" \
+       gd \
+       pdo_mysql \
+       mysqli \
+       mbstring \
+       zip \
+       intl \
+       opcache \
+  && rm -rf /var/lib/apt/lists/*
+
+# Instalar Composer (opcional, útil en dev)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+  && composer --version || true
+
+WORKDIR /var/www/html
+
+# Opcional: copiar php.ini si lo tienes
+# COPY docker/php/php.ini /usr/local/etc/php/php.ini
+
+# Limpiar caches
+RUN apt-get clean || true && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+EXPOSE 9000
+CMD ["php-fpm"]
