@@ -56,6 +56,62 @@ Comprueba que el alumno ha entregado todos los ficheros exigidos:
 2. Seleccionar el workflow correspondiente
 3. Cada job muestra en verde (OK) o rojo (FALLO) cada comprobación
 
-## Uso con Pull Requests de alumnos
+---
 
-Si los alumnos entregan su trabajo como Pull Request al repo, los workflows se ejecutan automáticamente sobre su código y el resultado aparece directamente en el PR antes de aceptarlo.
+## Cómo evaluar los proyectos de los alumnos
+
+Hay dos formas de organizar la entrega. Elige la que mejor encaje con tu dinámica de clase.
+
+---
+
+### Opción A — Ramas por alumno (entrega mediante Pull Request)
+
+Es la opción más sencilla sin herramientas externas.
+
+**Flujo:**
+
+1. El alumno clona el repo o hace un fork.
+2. Trabaja en una rama con su nombre: `alumno/juan-garcia`.
+3. Cuando termina, abre un **Pull Request** a `main`.
+4. GitHub Actions ejecuta los workflows automáticamente sobre su código.
+5. Tú ves en el PR:
+   - ✅ / ❌ por cada comprobación del workflow.
+   - El diff completo de su código.
+   - Puedes añadir comentarios de revisión línea a línea.
+
+```
+alumno hace fork → trabaja en rama → abre PR → GitHub Actions corre → tú revisas y calificas
+```
+
+**Ventaja:** todo ocurre en este mismo repo, sin configuración extra.  
+**Inconveniente:** los alumnos se ven el código entre ellos si el repo es público (usar repo privado resuelve esto).
+
+---
+
+### Opción B — GitHub Classroom (recomendado para grupos grandes)
+
+[GitHub Classroom](https://classroom.github.com) es gratuito para profesores y automatiza toda la gestión de repos individuales por alumno.
+
+**Flujo:**
+
+1. Entras en [classroom.github.com](https://classroom.github.com) con tu cuenta `AmadorProf`.
+2. Creas una **assignment** enlazada a este repo como plantilla.
+3. GitHub Classroom genera un **enlace de invitación** que repartes a la clase.
+4. Cada alumno acepta el enlace → GitHub les crea automáticamente un **repo privado** con el código base.
+5. Los workflows de evaluación corren en el repo de cada alumno cada vez que hacen push.
+6. Desde el panel de Classroom ves el estado de todos los alumnos en una sola pantalla.
+
+**Ventaja:** repos privados individuales, dashboard centralizado, sin que los alumnos se vean entre sí.  
+**Inconveniente:** requiere configurar Classroom una vez al principio del curso.
+
+---
+
+### Comparativa
+
+| | Opción A (ramas + PR) | Opción B (GitHub Classroom) |
+|---|---|---|
+| Configuración | Ninguna | 15-20 min inicial |
+| Privacidad entre alumnos | Depende del repo | Garantizada (repos privados) |
+| Dashboard centralizado | No | Sí |
+| Comentarios línea a línea | Sí | Sí |
+| Ideal para | Entregas puntuales | Grupos completos de clase |
