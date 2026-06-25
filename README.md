@@ -1,4 +1,4 @@
-# DWES 2025/26 — Desarrollo Web en Entorno Servidor
+# DWES — Desarrollo Web en Entorno Servidor
 
 [![Pagina web](https://img.shields.io/badge/Pagina_web-ver-4A90E2?style=flat-square&logo=github)](https://amadorprof.github.io/DWES-2526/)
 [![Licencia CC BY 4.0](https://img.shields.io/badge/Licencia-CC%20BY%204.0-green?style=flat-square)](https://creativecommons.org/licenses/by/4.0/)
