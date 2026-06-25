@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DWES 2025/26 — Desarrollo Web en Entorno Servidor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f8fafc; color: #1e293b; }
+    header { background: #1e293b; color: #fff; padding: 40px 24px 32px; text-align: center; }
+    header h1 { font-size: 1.8rem; font-weight: 700; }
+    header p { margin-top: 8px; color: #94a3b8; font-size: 0.95rem; }
+    main { max-width: 900px; margin: 40px auto; padding: 0 24px 80px; }
+    .block { margin-bottom: 48px; }
+    .block h2 { font-size: 1.15rem; font-weight: 700; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; transition: box-shadow 0.15s; }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .card-title { font-size: 0.9rem; font-weight: 500; color: #1e293b; }
+    .btn { font-size: 0.8rem; background: #1e293b; color: #fff; padding: 5px 14px; border-radius: 6px; text-decoration: none; white-space: nowrap; }
+    .btn:hover { background: #334155; }
+    footer { text-align: center; padding: 32px; color: #94a3b8; font-size: 0.85rem; }
+    footer a { color: #64748b; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>DWES 2025/26</h1>
+  <p>Desarrollo Web en Entorno Servidor &nbsp;·&nbsp; PHP · Laravel · MySQL</p>
+</header>
+<main>
+
+  <div class="block">
+    <h2>Bloque 1 — PHP</h2>
+    <div class="grid">
+      <div class="card"><span class="card-title">Guia XAMPP, PHP y VSCode</span><a class="btn" href="viewer.html?file=PHP/Guia_XAMPP_PHP_VSCode.md">Ver</a></div>
+      <div class="card"><span class="card-title">Formularios PHP</span><a class="btn" href="viewer.html?file=PHP/php_form.md">Ver</a></div>
+      <div class="card"><span class="card-title">Seguridad en formularios</span><a class="btn" href="viewer.html?file=PHP/seguridad_form.md">Ver</a></div>
+      <div class="card"><span class="card-title">Sesiones PHP</span><a class="btn" href="viewer.html?file=PHP/sesionesPHP.md">Ver</a></div>
+      <div class="card"><span class="card-title">PHP y BBDD (MySQL)</span><a class="btn" href="viewer.html?file=PHP/PHP_BBDD.md">Ver</a></div>
+      <div class="card"><span class="card-title">PHP orientado a objetos</span><a class="btn" href="viewer.html?file=PHP/PHP_POO.md">Ver</a></div>
+      <div class="card"><span class="card-title">Instalacion SQL con PHP</span><a class="btn" href="viewer.html?file=PHP/instalacionsqlPHP.md">Ver</a></div>
+      <div class="card"><span class="card-title">Guia documentacion PHP</span><a class="btn" href="viewer.html?file=PHP/guia_doc_php.md">Ver</a></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Bloque 2 — Laravel</h2>
+    <div class="grid">
+      <div class="card"><span class="card-title">Primeros pasos con Laravel</span><a class="btn" href="viewer.html?file=laravel/teoria/primeroPasosLaravel.md">Ver</a></div>
+      <div class="card"><span class="card-title">Rutas en Laravel</span><a class="btn" href="viewer.html?file=laravel/teoria/rutasLaravel.md">Ver</a></div>
+      <div class="card"><span class="card-title">Vistas Blade</span><a class="btn" href="viewer.html?file=laravel/teoria/tutorial.md">Ver</a></div>
+      <div class="card"><span class="card-title">Tutorial App — rutas y controladores</span><a class="btn" href="viewer.html?file=laravel/teoria/tutorial1App.md">Ver</a></div>
+      <div class="card"><span class="card-title">Tutorial App — modelos y BBDD</span><a class="btn" href="viewer.html?file=laravel/teoria/tutorial1AppModelos.md">Ver</a></div>
+      <div class="card"><span class="card-title">Sesiones, helpers y CRUD</span><a class="btn" href="viewer.html?file=laravel/teoria/GestionSesionesUsuariosErrrores.md">Ver</a></div>
+      <div class="card"><span class="card-title">Tutorial XAMPP con Laravel</span><a class="btn" href="viewer.html?file=laravel/teoria/tutorialXamp.md">Ver</a></div>
+      <div class="card"><span class="card-title">Autenticacion de usuarios</span><a class="btn" href="viewer.html?file=laravel/autenticacionUsers.md">Ver</a></div>
+      <div class="card"><span class="card-title">API REST — referencia</span><a class="btn" href="viewer.html?file=referencias/api-rest.html">Ver</a></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Proyectos</h2>
+    <div class="grid">
+      <div class="card"><span class="card-title">Proyecto PHP — Mountain Connect</span><a class="btn" href="viewer.html?file=PHP/proyecto/proyectoPHP.md">Ver</a></div>
+      <div class="card"><span class="card-title">Proyecto Laravel</span><a class="btn" href="viewer.html?file=laravel/proyecto/proyectoLaravel.md">Ver</a></div>
+      <div class="card"><span class="card-title">Guia memoria del proyecto</span><a class="btn" href="viewer.html?file=laravel/proyecto/guiaMemoria.md">Ver</a></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Examenes</h2>
+    <div class="grid">
+      <div class="card"><span class="card-title">Rubrica examen 1a evaluacion</span><a class="btn" href="viewer.html?file=examen-ev1/rubricaExamen.md">Ver</a></div>
+      <div class="card"><span class="card-title">Enunciado examen 2a evaluacion</span><a class="btn" href="viewer.html?file=examen-ev2/enunciado_examen.md">Ver</a></div>
+      <div class="card"><span class="card-title">Evaluacion GitHub</span><a class="btn" href="viewer.html?file=evaluaciongithub/README.md">Ver</a></div>
+    </div>
+  </div>
+
+</main>
+<footer>
+  <a href="https://github.com/AmadorProf/DWES-2526">github.com/AmadorProf/DWES-2526</a>
+  &nbsp;·&nbsp;
+  <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+</footer>
+</body>
+</html>
